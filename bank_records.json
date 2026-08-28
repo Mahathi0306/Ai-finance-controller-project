@@ -1,0 +1,217 @@
+[
+  {
+    "bank_tx_id": "BANK_5001",
+    "narration": "UPI/TXN_1001/PRIYASHARMA",
+    "amount": 737.6,
+    "date": "2026-08-03",
+    "ground_truth_ledger_ids": [
+      "TXN_1001"
+    ]
+  },
+  {
+    "bank_tx_id": "BANK_5006",
+    "narration": "UPI/TXN_1006/RAHULVERMA",
+    "amount": 2594.19,
+    "date": "2026-08-05",
+    "ground_truth_ledger_ids": [
+      "TXN_1006"
+    ]
+  },
+  {
+    "bank_tx_id": "BANK_5015",
+    "narration": "UPI/TXN_1015/ARJUNMEHTA",
+    "amount": 5984.85,
+    "date": "2026-08-01",
+    "ground_truth_ledger_ids": [
+      "TXN_1015"
+    ]
+  },
+  {
+    "bank_tx_id": "BANK_5019",
+    "narration": "UPI/TXN_1019/ANANYARAO",
+    "amount": 4016.72,
+    "date": "2026-08-02",
+    "ground_truth_ledger_ids": [
+      "TXN_1019"
+    ]
+  },
+  {
+    "bank_tx_id": "BANK_5010",
+    "narration": "UPI/TXN_1010/PRIYASHARMA",
+    "amount": 1381.09,
+    "date": "2026-08-01",
+    "ground_truth_ledger_ids": [
+      "TXN_1010"
+    ]
+  },
+  {
+    "bank_tx_id": "BANK_5012",
+    "narration": "UPI/TXN_1012/SNEHAREDDY",
+    "amount": 8167.72,
+    "date": "2026-08-04",
+    "ground_truth_ledger_ids": [
+      "TXN_1012"
+    ]
+  },
+  {
+    "bank_tx_id": "BANK_5022",
+    "narration": "CMS/INB/1022/VIKRAM",
+    "amount": 2926.76,
+    "date": "2026-08-07",
+    "ground_truth_ledger_ids": [
+      "TXN_1022"
+    ]
+  },
+  {
+    "bank_tx_id": "BANK_5005",
+    "narration": "UPI/TXN_1005/RAMESHKUMAR",
+    "amount": 5831.83,
+    "date": "2026-08-05",
+    "ground_truth_ledger_ids": [
+      "TXN_1005"
+    ]
+  },
+  {
+    "bank_tx_id": "BANK_5018",
+    "narration": "UPI/TXN_1018/RAHULVERMA",
+    "amount": 3140.75,
+    "date": "2026-08-03",
+    "ground_truth_ledger_ids": [
+      "TXN_1018"
+    ]
+  },
+  {
+    "bank_tx_id": "BANK_5020",
+    "narration": "UPI/TXN_1020/SNEHAREDDY",
+    "amount": 7167.29,
+    "date": "2026-08-01",
+    "ground_truth_ledger_ids": [
+      "TXN_1020"
+    ]
+  },
+  {
+    "bank_tx_id": "BANK_5014",
+    "narration": "UPI/TXN_1014/PRIYASHARMA",
+    "amount": 5744.39,
+    "date": "2026-08-05",
+    "ground_truth_ledger_ids": [
+      "TXN_1014"
+    ]
+  },
+  {
+    "bank_tx_id": "BANK_5017",
+    "narration": "UPI/TXN_1017/PRIYASHARMA",
+    "amount": 8625.52,
+    "date": "2026-08-01",
+    "ground_truth_ledger_ids": [
+      "TXN_1017"
+    ]
+  },
+  {
+    "bank_tx_id": "BANK_5023",
+    "narration": "RAZORPAY/BATCH_STLMT/B001/COUNT_2",
+    "amount": 5802.77,
+    "date": "2026-08-10",
+    "ground_truth_ledger_ids": [
+      "TXN_1023",
+      "TXN_1024"
+    ]
+  },
+  {
+    "bank_tx_id": "BANK_5016",
+    "narration": "UPI/TXN_1016/RAMESHKUMAR",
+    "amount": 6782.0,
+    "date": "2026-08-03",
+    "ground_truth_ledger_ids": [
+      "TXN_1016"
+    ]
+  },
+  {
+    "bank_tx_id": "BANK_5004",
+    "narration": "UPI/TXN_1004/RAMESHKUMAR",
+    "amount": 1390.1,
+    "date": "2026-08-02",
+    "ground_truth_ledger_ids": [
+      "TXN_1004"
+    ]
+  },
+  {
+    "bank_tx_id": "BANK_5021",
+    "narration": "CMS/INB/1021/ANANYA",
+    "amount": 5111.15,
+    "date": "2026-08-07",
+    "ground_truth_ledger_ids": [
+      "TXN_1021"
+    ]
+  },
+  {
+    "bank_tx_id": "BANK_5007",
+    "narration": "UPI/TXN_1007/SNEHAREDDY",
+    "amount": 8189.59,
+    "date": "2026-08-01",
+    "ground_truth_ledger_ids": [
+      "TXN_1007"
+    ]
+  },
+  {
+    "bank_tx_id": "BANK_5003",
+    "narration": "UPI/TXN_1003/PRIYASHARMA",
+    "amount": 6109.68,
+    "date": "2026-08-01",
+    "ground_truth_ledger_ids": [
+      "TXN_1003"
+    ]
+  },
+  {
+    "bank_tx_id": "BANK_5009",
+    "narration": "UPI/TXN_1009/SNEHAREDDY",
+    "amount": 1977.06,
+    "date": "2026-08-03",
+    "ground_truth_ledger_ids": [
+      "TXN_1009"
+    ]
+  },
+  {
+    "bank_tx_id": "BANK_5013",
+    "narration": "UPI/TXN_1013/PRIYASHARMA",
+    "amount": 9744.6,
+    "date": "2026-08-04",
+    "ground_truth_ledger_ids": [
+      "TXN_1013"
+    ]
+  },
+  {
+    "bank_tx_id": "BANK_5011",
+    "narration": "UPI/TXN_1011/ARJUNMEHTA",
+    "amount": 8551.2,
+    "date": "2026-08-05",
+    "ground_truth_ledger_ids": [
+      "TXN_1011"
+    ]
+  },
+  {
+    "bank_tx_id": "BANK_5024",
+    "narration": "NEFT/UNKNOWN_SOURCE/REF98765",
+    "amount": 3200.0,
+    "date": "2026-08-13",
+    "ground_truth_ledger_ids": []
+  },
+  {
+    "bank_tx_id": "BANK_5008",
+    "narration": "UPI/TXN_1008/ANANYARAO",
+    "amount": 7132.32,
+    "date": "2026-08-03",
+    "ground_truth_ledger_ids": [
+      "TXN_1008"
+    ]
+  },
+  {
+    "bank_tx_id": "BANK_5002",
+    "narration": "UPI/TXN_1002/VIKRAMPATEL",
+    "amount": 2620.5,
+    "date": "2026-08-01",
+    "ground_truth_ledger_ids": [
+      "TXN_1002"
+    ]
+  }
+]

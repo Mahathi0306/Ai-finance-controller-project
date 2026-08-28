@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reconciliation Copilot</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+  </style>
+</head>
+<body class="p-6 md:p-10 text-slate-800">
+  <div id="app" class="max-w-7xl mx-auto space-y-8">
+    
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-6">
+      <div>
+        <div class="flex items-center gap-3">
+          <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Reconciliation Copilot</h1>
+          
+        </div>
+        <p class="text-sm text-slate-500 font-medium mt-1">Autonomous Settlement Adjudicator, Combinatorial Batch Reconciler & Exception Reporter</p>
+      </div>
+      <button 
+        @click="runReconcile" 
+        :disabled="loading"
+        class="inline-flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm rounded-lg shadow-sm transition disabled:opacity-50">
+        <span v-if="loading">Processing Reconciliation...</span>
+        <span v-else>Run Autonomous Reconcile</span>
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Money Reconciled</p>
+        <p class="text-2xl font-bold text-emerald-600 mt-2">{{ summary.money_reconciled_inr || '₹0.00' }}</p>
+        <p class="text-xs text-slate-500 mt-1">{{ summary.total_matches_resolved || 0 }} Settled ({{ summary.bank_settlement_match_rate || '0%' }})</p>
+      </div>
+
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-amber-500">
+        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Money at Risk (Review)</p>
+        <p class="text-2xl font-bold text-amber-600 mt-2">{{ summary.money_at_risk_inr || '₹0.00' }}</p>
+        <p class="text-xs text-slate-500 mt-1">{{ summary.unresolved_exceptions || 0 }} Items Requiring Human Review</p>
+      </div>
+
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">AI Execution Cost</p>
+        <p class="text-2xl font-bold text-slate-900 mt-2">{{ summary.total_reconciliation_cost_inr || '₹0.00' }}</p>
+        <p class="text-xs text-slate-500 mt-1">{{ summary.total_tokens_consumed || 0 }} Tokens</p>
+      </div>
+
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">System Throughput</p>
+        <p class="text-2xl font-bold text-indigo-600 mt-2">{{ summary.processing_time_sec || 0 }}s</p>
+        <p class="text-xs text-slate-500 mt-1">{{ summary.throughput_records_per_sec || 0 }} records/sec</p>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50/50">
+        <div>
+          <h2 class="font-bold text-slate-900">Reconciled Settlements ({{ matched.length }})</h2>
+          <p class="text-xs text-slate-500">Auto-verified against ground truth</p>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-50 text-slate-500 text-xs uppercase font-semibold border-b border-slate-200">
+            <tr>
+              <th class="px-6 py-3">Bank ID</th>
+              <th class="px-6 py-3">Orders / Customer</th>
+              <th class="px-6 py-3">Bank Amt</th>
+              <th class="px-6 py-3">Order Amt</th>
+              <th class="px-6 py-3">Source & Confidence</th>
+              <th class="px-6 py-3">Structured Reasoning Trace</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr v-for="item in matched" :key="item.bank_tx_id" class="hover:bg-slate-50/60 transition">
+              <td class="px-6 py-4 mono font-medium text-slate-700 text-xs">{{ item.bank_tx_id }}</td>
+              <td class="px-6 py-4">
+                <span class="mono text-xs font-semibold text-slate-800">{{ item.internal_ids.join(', ') }}</span>
+                <span class="block text-xs text-slate-500 truncate max-w-xs">{{ item.customer_names }}</span>
+              </td>
+              <td class="px-6 py-4 font-semibold text-slate-900">₹{{ item.bank_amount.toFixed(2) }}</td>
+              <td class="px-6 py-4 text-slate-600">₹{{ item.company_amount.toFixed(2) }}</td>
+              <td class="px-6 py-4">
+                <div class="space-y-1">
+                  <span v-if="item.source === 'DETERMINISTIC'" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-800">
+                    🟢 DETERMINISTIC
+                  </span>
+                  <span v-else-if="item.source === 'GEMINI_LIVE'" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                    🔵 GEMINI LIVE
+                  </span>
+                  <span v-else class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800">
+                    🟠 RULE FALLBACK
+                  </span>
+                  <p class="text-xs font-bold text-slate-700">{{ Math.round(item.confidence * 100) }}% Confidence</p>
+                </div>
+              </td>
+              <td class="px-6 py-4 text-xs text-slate-600 max-w-md">
+                <div v-if="item.structured_reasoning" class="space-y-1 bg-slate-50 p-2.5 rounded border border-slate-200">
+                  <p><span class="font-semibold text-slate-700">Ref Match:</span> {{ item.structured_reasoning.reference_match }}</p>
+                  <p><span class="font-semibold text-slate-700">Variance:</span> {{ item.structured_reasoning.variance_pct }} ({{ item.structured_reasoning.mdr_status }})</p>
+                  <p><span class="font-semibold text-slate-700">Timing:</span> {{ item.structured_reasoning.settlement_lag }}</p>
+                </div>
+                <p v-else class="mt-1 text-slate-500">{{ item.reasoning }}</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="px-6 py-4 border-b border-slate-200 bg-amber-50/40 flex justify-between items-center">
+        <div>
+          <h2 class="font-bold text-amber-950">Exceptions Flagged for Human Review ({{ exceptions.length }})</h2>
+          <p class="text-xs text-amber-700">Duplicates, partial settlements, ambiguous matches & unmapped records</p>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-50 text-slate-500 text-xs uppercase font-semibold border-b border-slate-200">
+            <tr>
+              <th class="px-6 py-3">Record ID</th>
+              <th class="px-6 py-3">Source</th>
+              <th class="px-6 py-3">Amount</th>
+              <th class="px-6 py-3">Category</th>
+              <th class="px-6 py-3">Risk Justification</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr v-for="item in exceptions" :key="item.record_id" class="hover:bg-slate-50/60 transition">
+              <td class="px-6 py-4 mono font-medium text-slate-700 text-xs">{{ item.record_id }}</td>
+              <td class="px-6 py-4">
+                <span :class="item.source === 'BANK' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'" class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium">
+                  {{ item.source }}
+                </span>
+              </td>
+              <td class="px-6 py-4 font-semibold text-slate-900">₹{{ item.amount.toFixed(2) }}</td>
+              <td class="px-6 py-4">
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-amber-100 text-amber-900">
+                  {{ item.category }}
+                </span>
+              </td>
+              <td class="px-6 py-4 text-xs text-amber-900 font-medium max-w-md">{{ item.reason }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const { createApp, ref, onMounted } = Vue;
+
+    createApp({
+      setup() {
+        const loading = ref(false);
+        const summary = ref({});
+        const matched = ref([]);
+        const exceptions = ref([]);
+        
+        const API_URL = window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1')
+          ? 'http://127.0.0.1:8000'
+          : window.location.origin;
+
+        const runReconcile = async () => {
+          loading.value = true;
+          try {
+            const res = await fetch(`${API_URL}/api/reconcile`);
+            const data = await res.json();
+            summary.value = data.summary || {};
+            matched.value = data.matched || [];
+            exceptions.value = data.exceptions || [];
+          } catch (err) {
+            console.error("Failed:", err);
+            alert("Ensure uvicorn is running on http://127.0.0.1:8000");
+          } finally {
+            loading.value = false;
+          }
+        };
+
+        onMounted(() => {
+          runReconcile();
+        });
+
+        return {
+          loading,
+          summary,
+          matched,
+          exceptions,
+          runReconcile
+        };
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>
